@@ -22,6 +22,36 @@ namespace Maze_Component
         private const int NR_OF_ROWS_TO_CHECK_VERTICALLY = 3;
         private const int NR_OF_COLUMNS_TO_CHECK_VERTICALLY = 2;
 
+        private class ParameterValidator
+        {
+            private const int HEIGHT_LOWER_LIMIT = 3;
+            private const int LENGTH_LOWER_LIMIT = 3;
+
+            private const int HEIGHT_UPPER_LIMIT = 100;
+            private const int LENGTH_UPPER_LIMIT = 100;
+
+
+            public ParameterValidator() { }
+
+            public void ValidateGenerateParameters(int height, int length)
+            {
+                if (height < HEIGHT_LOWER_LIMIT)
+                    throw new ArgumentException("Height needs to be higher than " + HEIGHT_LOWER_LIMIT + "!");
+                if (length < LENGTH_LOWER_LIMIT)
+                    throw new ArgumentException("Length needs to be higher than " + LENGTH_LOWER_LIMIT + "!");
+                if (height > HEIGHT_UPPER_LIMIT)
+                    throw new ArgumentException("Height needs to be lower than " + HEIGHT_UPPER_LIMIT + "!");
+                if (length > LENGTH_UPPER_LIMIT)
+                    throw new ArgumentException("Length needs to be lower than " + LENGTH_UPPER_LIMIT + "!");
+            }
+
+            public void ValidateGetterFunctions(int floorCode, int wallCode)
+            {
+                if (floorCode == wallCode)
+                    throw new ArgumentException("Parameters must be different!");
+            }
+        }
+
         private enum Direction
         {
             Up,
@@ -36,10 +66,11 @@ namespace Maze_Component
             Floor
         }
 
-        int[,] maze;
-        Random random;
+        private int[,] maze;
+        private Random random;
+        private ParameterValidator validator;
 
-        public MazeGenerator() { }
+        public MazeGenerator() { validator = new ParameterValidator(); }
 
         /// <summary>
         /// Generates a 2d array maze
@@ -63,10 +94,13 @@ namespace Maze_Component
         /// <param name="length">Number of columns in maze</param>
         public void Generate(int height, int length)
         {
-            if(height < 3 || length < 3 || (height + length > 150))
+            try
             {
-                maze = new int[0, 0];
-                return;
+                validator.ValidateGenerateParameters(height, length);
+            }
+            catch(ArgumentException)
+            {
+                height = length = 0;
             }
 
             maze = new int[height, length];
@@ -205,15 +239,26 @@ namespace Maze_Component
 
         /// <summary>
         /// Getter method for the maze
+        /// Parameters must be different, otherwise the function will return with default parameters
         /// </summary>
-        /// <param name="floorCode">Caller can choose the floor integer value in the maze, default value is 1</param>
-        /// <param name="wallCode">Caller can choose the wall integer value in the maze, default value is 0</param>
+        /// <param name="floorCode">Caller can choose the floor integer value in the maze, default value is 1, must be different than the other parameter!</param>
+        /// <param name="wallCode">Caller can choose the wall integer value in the maze, default value is 0, must be different than the other parameter!</param>
         /// <returns>
         /// Returns a copy of the maze using a 2 dimensional List
         /// </returns>
         public List<List<int>> GetListMaze(int floorCode = 1,
                                            int wallCode = 0)
         {
+            try
+            {
+                validator.ValidateGetterFunctions(floorCode, wallCode);
+            }
+            catch (ArgumentException)
+            {
+                floorCode = 1;
+                wallCode = 0;
+            }
+
             List<List<int>> mazeCopy;
             int i, j, rowsCount, columnsCount;
 
@@ -240,15 +285,26 @@ namespace Maze_Component
 
         /// <summary>
         /// Getter method for the maze
+        /// Parameters must be different, otherwise the function will return with default parameters
         /// </summary>
-        /// <param name="floorCode">Caller can choose the floor integer value in the maze, default value is 1</param>
-        /// <param name="wallCode">Caller can choose the wall integer value in the maze, default value is 0</param>
+        /// <param name="floorCode">Caller can choose the floor integer value in the maze, default value is 1, must be different than the other parameter!</param>
+        /// <param name="wallCode">Caller can choose the wall integer value in the maze, default value is 0, must be different than the other parameter!</param>
         /// <returns>
         /// Returns a copy of the maze using a 2 dimensional array
         /// </returns>
         public int[,] GetArrayMaze(int floorCode = 1,
                                    int wallCode = 0)
         {
+            try
+            {
+                validator.ValidateGetterFunctions(floorCode, wallCode);
+            }
+            catch(ArgumentException)
+            {
+                floorCode = 1;
+                wallCode = 0;
+            }
+
             int[,] mazeCopy;
             int i, j, rowsCount, columnsCount;
 
