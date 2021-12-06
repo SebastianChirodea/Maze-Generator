@@ -2,12 +2,13 @@
 using System.Collections.Generic;
 using System.Linq;
 
+
 namespace Maze_Component
 {
     /// <summary>
     /// Generates 2d mazes and returns them in different formats
     /// </summary>
-    class MazeGenerator
+    public class MazeGenerator
     {
         private const int COLUMN_INDEX_BEGINNING = 1;
         private const int ROW_INDEX_BEGINNING = 1;
@@ -22,13 +23,16 @@ namespace Maze_Component
         private const int NR_OF_ROWS_TO_CHECK_VERTICALLY = 3;
         private const int NR_OF_COLUMNS_TO_CHECK_VERTICALLY = 2;
 
-        private class ParameterValidator
-        {
-            private const int HEIGHT_LOWER_LIMIT = 3;
-            private const int LENGTH_LOWER_LIMIT = 3;
+        public const int WALL_CODE_DEFAULT_VALUE = 0;
+        public const int FLOOR_CODE_DEFAULT_VALUE = 1;
 
-            private const int HEIGHT_UPPER_LIMIT = 100;
-            private const int LENGTH_UPPER_LIMIT = 100;
+        public class ParameterValidator
+        {
+            public const int HEIGHT_LOWER_LIMIT = 3;
+            public const int LENGTH_LOWER_LIMIT = 3;
+
+            public const int HEIGHT_UPPER_LIMIT = 100;
+            public const int LENGTH_UPPER_LIMIT = 100;
 
 
             public ParameterValidator() { }
@@ -100,7 +104,8 @@ namespace Maze_Component
             }
             catch(ArgumentException)
             {
-                height = length = 0;
+                maze = new int[0, 0];
+                return;
             }
 
             maze = new int[height, length];
@@ -246,8 +251,8 @@ namespace Maze_Component
         /// <returns>
         /// Returns a copy of the maze using a 2 dimensional List
         /// </returns>
-        public List<List<int>> GetListMaze(int floorCode = 1,
-                                           int wallCode = 0)
+        public List<List<int>> GetListMaze(int floorCode = FLOOR_CODE_DEFAULT_VALUE,
+                                           int wallCode = WALL_CODE_DEFAULT_VALUE)
         {
             try
             {
@@ -292,8 +297,8 @@ namespace Maze_Component
         /// <returns>
         /// Returns a copy of the maze using a 2 dimensional array
         /// </returns>
-        public int[,] GetArrayMaze(int floorCode = 1,
-                                   int wallCode = 0)
+        public int[,] GetArrayMaze(int floorCode = FLOOR_CODE_DEFAULT_VALUE,
+                                   int wallCode = WALL_CODE_DEFAULT_VALUE)
         {
             try
             {
